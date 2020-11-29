@@ -160,12 +160,6 @@ caname:
 #############################################################################
 bccsp:
   default: PKCS11
-  sw:
-    hash: SHA2
-    security: 256
-    filekeystore:
-      # The directory used for the software file-based keystore
-      keystore: msp/keystore
   pkcs11:
     library: /usr/lib/softhsm/libsofthsm2.so
     # library: /etc/hyperledger/fabric/libsofthsm2.so

@@ -1,0 +1,3 @@
+[submodule "chaincode/hyperledger-fabric-shipment"]
+	path = chaincode/hyperledger-fabric-shipment
+	url = https://github.com/celiakwan/hyperledger-fabric-shipment.git
