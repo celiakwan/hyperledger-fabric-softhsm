@@ -1,0 +1,12 @@
+*.log
+*.iml
+build/
+.DS_Store/
+.idea/
+.gradle/
+gradlew
+gradlew.bat
+bin/
+.vscode/
+softhsm-network/softhsm/tokens/
+chaincode/
