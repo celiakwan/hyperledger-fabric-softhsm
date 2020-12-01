@@ -1,8 +1,8 @@
 # hyperledger-fabric-softhsm
-An integration of Hyperledger Fabric and SoftHSM implementing PKCS11 standard for key management. This guide demonstrates how to configure TLS-enabled CA servers, CA clients, peer and ordering nodes, and how to deploy the nodes using Docker Compose. It also covers some potential errors and troubleshooting.
+An integration of Hyperledger Fabric and SoftHSM implementing PKCS11 standard for key management. This guide demonstrates how to configure TLS-enabled CA servers, CA clients, peer and ordering nodes, and how to deploy the nodes with Docker Compose in order to use SoftHSM. It also covers some potential errors and troubleshooting.
 
 ### Version
-- [Hyperledger Fabric](https://hyperledger-fabric.readthedocs.io/): 2.x
+- [Hyperledger Fabric](https://hyperledger-fabric.readthedocs.io/): 2.3.0
 - Hyperledger Fabric repositories
     - [Hyperledger Fabric CA](https://github.com/hyperledger/fabric-ca): 1.4.9
     - [Hyperledger Fabric](https://github.com/hyperledger/fabric): 2.3.0
@@ -41,8 +41,8 @@ brew install softhsm
     ```
     
     `directories.tokendir` is the location to store tokens that the nodes will interact with. For demonstration, we set it to `/softhsm/tokens` in the project directory.
-
     &nbsp;
+
     Note: The existing `softhsm2.conf` located at `/softhsm` is the config file that will be used by Docker Compose. We should create a new `softhsm2.conf` instead of using it.
     &nbsp;
 
@@ -147,7 +147,7 @@ Useful commands:
 
 ##### Docker Compose Files
 ###### Fabric CA
-- The Docker Compose file of a peer's CA is like this.
+- The Docker Compose file of a peer org's CA is like this.
     ```
     ca_org1:
     image: hyperledger/fabric-ca:latest
@@ -171,7 +171,7 @@ Useful commands:
       - test
     ```
 
-- The Docker Compose file of an orderer's CA is like this.
+- The Docker Compose file of an orderer org's CA is like this.
     ```
     ca_orderer:
     image: hyperledger/fabric-ca:latest
@@ -282,7 +282,7 @@ Useful commands:
 
 ##### Hyperledger Fabric Config Files
 ###### Fabric CA Server
-Replace the `bccsp` section in `fabric-ca-server-config.yaml` with the following for peer and orderer's CAs.
+Replace the `bccsp` section in `fabric-ca-server-config.yaml` with the following for peer org CAs and orderer org CAs.
 ```
 bccsp:
     default: PKCS11
@@ -296,7 +296,7 @@ bccsp:
 ```
 
 ###### Fabric CA Client
-Replace the `bccsp` section in `fabric-ca-client-config.yaml` with the following for peer and orderer's CA clients.
+Replace the `bccsp` section in `fabric-ca-client-config.yaml` with the following for peer org CA clients and orderer org CA clients.
 ```
 bccsp:
     default: PKCS11
@@ -310,7 +310,7 @@ bccsp:
 ```
 
 ###### Fabric Peer and Orderer
-- `generate-config.sh` will help generate the config files for peers and orderer. The `bccsp` section in the generated config files look like this.
+- `generate-config.sh` will help generate the config files for peers and orderer. The `bccsp` section in the generated config files for orgs and users looks like this.
     ```
     BCCSP:
         Default: PKCS11
@@ -323,7 +323,7 @@ bccsp:
             Immutable: false
     ```
 
-    Note: As of now, Hyperledger Fabric does not support HSM integration for TLS. The TLS private keys will still be stored in `keystore`. The `bccsp` section should remain the default `SW` configuration and this will be handled by `generate-config.sh` as well.
+    Note: As of now, Hyperledger Fabric does not support HSM integration for TLS. The TLS private keys will still be stored in `keystore`. The `bccsp` section in the generated config files for core peers and orderers will remain the default `SW` configuration.
     ```
     BCCSP:
         Default: SW
@@ -366,7 +366,7 @@ The binaries in `/bin` is retrieved from the Hyperledger Fabric samples reposito
 git clone https://github.com/hyperledger/fabric-samples.git
 ```
 
-Note: These binaries are not supported for PKCS11 and are only executed for operations that do not require PKCS11. In order to execute operations that need PKCS11 such as `fabric-ca-client enroll`, we should execute through Docker like `docker exec peer0.org1.example.com fabric-ca-client enroll`.
+Note: These binaries do not support PKCS11 and are only executed for operations that do not require PKCS11. In order to execute operations that need PKCS11 such as `fabric-ca-client enroll`, we should execute through Docker like `docker exec peer0.org1.example.com fabric-ca-client enroll`.
 
 ### Deployment
 `network.sh` provides a menu with a list of options to help us deploy the nodes automatically and let us play around with the chaincode.
@@ -380,6 +380,16 @@ Please select:
 5) Invoke_chaincode_ship
 ```
 
+- 1: Clean up previous environments and bring up the network
+- 2: Deploy the chaincode in `/chaincode/hyperledger-fabric-shipment`
+- 3: Invoke the chaincode and initiate initLedger flow (create a default shipping order)
+- 4: Invoke the chaincode and initiate order flow (create a shipping order)
+- 5: Invoke the chaincode and initiate ship flow (update status after the package is shipped)
+- 6: Invoke the chaincode and initiate deliver flow (update status after the package is delivered)
+- 7: Invoke the chaincode and initiate getAllRecords flow (Check all shipment records)
+- 8: Shutdown the network
+- 9: Clean the tokens generated by SoftHSM
+
 ### Troubleshooting
 - `Error: Failed to get BCCSP with opts: Could not find BCCSP, no 'PKCS11' provider`
 &nbsp;
@@ -390,4 +400,4 @@ Please select:
 - `Error: Failed to get BCCSP with opts: Could not initialize BCCSP PKCS11: Failed initializing PKCS11 library /etc/hyperledger/fabric/libsofthsm2.so token-fabric: Instantiate failed [/etc/hyperledger/fabric/libsofthsm2.so]`
 &nbsp;
 
-    Even the `libsofthsm2.so` has been mounted to Docker containers, it still threw an error saying the `libsofthsm2.so` could not be initialized. Since the Docker images of Hyperledger Fabric 2.x are using Alpine Linux, it could potentially miss some dependencies to run SoftHSM. The workaround is to install SoftHSM on the containers so that all dependencies for SoftHSM can be resolved.
+    Even the `libsofthsm2.so` has been mounted to Docker containers, it still threw an error saying the `libsofthsm2.so` could not be initialized. Since the Docker images of Hyperledger Fabric 2.x are using Alpine Linux, it might potentially miss some dependencies to load `libsofthsm2.so`. The workaround is to install SoftHSM on the containers so that all dependencies for SoftHSM can be resolved.
