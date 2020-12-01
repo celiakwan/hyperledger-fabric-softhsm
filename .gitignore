@@ -2,9 +2,6 @@
 *.iml
 *.pem
 *.db
-*.block
-*.tx
-*.tar.gz
 IssuerPublicKey
 IssuerRevocationPublicKey
 connection-*.yaml
@@ -13,7 +10,10 @@ build/
 .idea/
 .gradle/
 .vscode/
+channel-artifacts/*
+package/*
 softhsm/tokens/*
+system-genesis-block/*
 organizations/*/*/msp/
 organizations/*/*/orderers/
 organizations/*/*/users/
