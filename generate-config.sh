@@ -1,7 +1,7 @@
 #!/bin/bash
 
 node_ous=""
-PKCS11_CONFIG="
+BCCSP_PKCS11="
 BCCSP:
     Default: PKCS11
     PKCS11:
@@ -11,15 +11,6 @@ BCCSP:
         Hash: SHA2
         Security: 256
         Immutable: false
-"
-SW_CONFIG="
-BCCSP:
-    Default: SW
-    SW:
-        Hash: SHA2
-        Security: 256
-        FileKeyStore:
-            KeyStore: msp/keystore
 "
 
 function set_node_ous() {
@@ -43,10 +34,5 @@ NodeOUs:
 
 function generate_config_pkcs11() {
     set_node_ous $1
-    echo "$node_ous$PKCS11_CONFIG" > $2
-}
-
-function generate_config_sw() {
-    set_node_ous $1
-    echo "$node_ous$SW_CONFIG" > $2
+    echo "$node_ous$BCCSP_PKCS11" > $2
 }

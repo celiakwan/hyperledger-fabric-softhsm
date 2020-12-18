@@ -30,7 +30,7 @@ function create_org1() {
   mkdir -p $ORG1_PATH/peers/peer0.org1.example.com
   echo "Generating org1 peer0 msp..."
   fabric_ca_client $CA_ORG1 enroll -u https://peer0:peer0pw@localhost:7054 --caname ca-org1 -M $FABRIC_CA_CLIENT_HOME/peers/peer0.org1.example.com/msp --csr.hosts peer0.org1.example.com --tls.certfiles $TLS_CERT
-  generate_config_sw $PEM_ORG1 $PWD/$ORG1_PATH/peers/peer0.org1.example.com/msp/config.yaml
+  cp $PWD/$ORG1_PATH/msp/config.yaml $PWD/$ORG1_PATH/peers/peer0.org1.example.com/msp/config.yaml
 
   echo "Generating org1 peer0 tls certificates..."
   fabric-ca-client enroll -u https://peer0:peer0pw@localhost:7054 --caname ca-org1 -M $PWD/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls --enrollment.profile tls --csr.hosts peer0.org1.example.com --csr.hosts localhost --tls.certfiles $PWD/organizations/fabric-ca/org1/tls-cert.pem
@@ -71,7 +71,7 @@ function create_org2() {
   mkdir -p $ORG2_PATH/peers/peer0.org2.example.com
   echo "Generating org2 peer0 msp..."
   fabric_ca_client $CA_ORG2 enroll -u https://peer0:peer0pw@localhost:8054 --caname ca-org2 -M $FABRIC_CA_CLIENT_HOME/peers/peer0.org2.example.com/msp --csr.hosts peer0.org2.example.com --tls.certfiles $TLS_CERT
-  generate_config_sw $PEM_ORG2 $PWD/$ORG2_PATH/peers/peer0.org2.example.com/msp/config.yaml
+  cp $PWD/$ORG2_PATH/msp/config.yaml $PWD/$ORG2_PATH/peers/peer0.org2.example.com/msp/config.yaml
 
   echo "Generating org2 peer0 tls certificates..."
   fabric-ca-client enroll -u https://peer0:peer0pw@localhost:8054 --caname ca-org2 -M $PWD/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls --enrollment.profile tls --csr.hosts peer0.org2.example.com --csr.hosts localhost --tls.certfiles $PWD/organizations/fabric-ca/org2/tls-cert.pem
@@ -110,7 +110,7 @@ function create_orderer() {
   mkdir -p $ORDERER_PATH/orderers/orderer.example.com
   echo "Generating orderer msp..."
   fabric_ca_client $CA_ORDERER enroll -u https://orderer:ordererpw@localhost:9054 --caname ca-orderer -M $FABRIC_CA_CLIENT_HOME/orderers/orderer.example.com/msp --csr.hosts orderer.example.com --csr.hosts localhost --tls.certfiles $TLS_CERT
-  generate_config_sw $PEM_ORDERER $PWD/$ORDERER_PATH/orderers/orderer.example.com/msp/config.yaml
+  cp $PWD/$ORDERER_PATH/msp/config.yaml $PWD/$ORDERER_PATH/orderers/orderer.example.com/msp/config.yaml
 
   echo "Generating orderer tls certificates..."
   fabric-ca-client enroll -u https://orderer:ordererpw@localhost:9054 --caname ca-orderer -M $PWD/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls --enrollment.profile tls --csr.hosts orderer.example.com --csr.hosts localhost --tls.certfiles $PWD/organizations/fabric-ca/ordererOrg/tls-cert.pem

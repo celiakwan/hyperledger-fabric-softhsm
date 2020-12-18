@@ -294,16 +294,16 @@ peer:
 
     # BCCSP (Blockchain crypto provider): Select which crypto implementation or
     # library to use
-    bccsp:
-        default: PKCS11
-        pkcs11:
-            library: /usr/lib/softhsm/libsofthsm2.so
-            # library: /etc/hyperledger/fabric/libsofthsm2.so
-            pin: 12345
-            label: token-fabric
-            hash: SHA2
-            security: 256
-            immutable: false
+    BCCSP:
+        Default: PKCS11
+        PKCS11:
+            Library: /usr/lib/softhsm/libsofthsm2.so
+            # Library: /etc/hyperledger/fabric/libsofthsm2.so
+            Pin: 12345
+            Label: token-fabric
+            Hash: SHA2
+            Security: 256
+            Immutable: false
 
     # Path on the file system where peer will find MSP local configurations
     mspConfigPath: msp
